@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中学・高校 公民・政治分野 重要暗記マスター</title>
+    <title>現代政治・社会分野 完全網羅 暗記マスター</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -78,11 +78,11 @@
                     </div>
                     <div>
                         <h1 class="text-lg font-bold leading-tight">政治・公民 暗記マスター</h1>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">教科書完全完全準拠（全45問収録）</p>
+                        <p id="total-count-badge" class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">教科書（テーマ13〜19）全太字・頻出語句網羅</p>
                     </div>
                 </div>
 
-                <!-- Dark Mode & Progress Summary -->
+                <!-- Dark Mode Toggle -->
                 <div class="flex items-center space-x-3">
                     <button id="themeToggleBtn" class="p-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
                         <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
@@ -124,6 +124,7 @@
                     <label class="text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0">分野:</label>
                     <select id="flashcard-category" onchange="filterFlashcards()" class="w-full sm:w-auto bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-xs sm:text-sm rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
                         <option value="all">全分野 (すべて)</option>
+                        <option value="fav">⭐ お気に入り・スター付きのみ</option>
                     </select>
                 </div>
                 <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
@@ -132,15 +133,15 @@
                         <span>シャッフル</span>
                     </button>
                     <button onclick="resetFlashcardProgress()" class="px-3 py-1.5 text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition">
-                        判定リセット
+                        習熟度リセット
                     </button>
                 </div>
             </div>
 
             <div class="space-y-1">
                 <div class="flex justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
-                    <span id="flashcard-progress-text">カード 1 / 45</span>
-                    <span id="flashcard-status-count">覚えた: 0 / 45</span>
+                    <span id="flashcard-progress-text">カード 1 / 0</span>
+                    <span id="flashcard-status-count">覚えた: 0 / 0</span>
                 </div>
                 <div class="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden flex">
                     <div id="flashcard-progress-bar" class="bg-blue-600 h-full transition-all duration-300" style="width: 0%"></div>
@@ -150,34 +151,46 @@
 
             <div class="perspective-1000 w-full min-h-[280px] sm:min-h-[340px] cursor-pointer group" onclick="toggleCardFlip()">
                 <div id="flashcard-inner" class="relative w-full h-full min-h-[280px] sm:min-h-[340px] rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 transition-transform duration-500 transform-style-3d">
+                    <!-- Surface (Question) -->
                     <div class="absolute inset-0 w-full h-full p-6 sm:p-8 flex flex-col justify-between backface-hidden rounded-2xl bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800/90">
                         <div class="flex justify-between items-center">
                             <span id="card-category-tag" class="px-2.5 py-1 bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 rounded-full text-xs font-bold">
                                 カテゴリ
                             </span>
-                            <span class="text-xs text-slate-400 flex items-center gap-1">
-                                <i class="fa-solid fa-rotate"></i> クリックでめくる
-                            </span>
+                            <div class="flex items-center space-x-3">
+                                <button onclick="event.stopPropagation(); toggleStarCurrent();" class="text-slate-300 hover:text-amber-400 transition" title="お気に入り登録">
+                                    <i id="card-star-icon-front" class="fa-solid fa-star text-lg"></i>
+                                </button>
+                                <span class="text-xs text-slate-400 flex items-center gap-1">
+                                    <i class="fa-solid fa-rotate"></i> クリックで反転
+                                </span>
+                            </div>
                         </div>
                         <div class="my-auto py-4 text-center">
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">QUESTION</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">QUESTION / 用語の説明</p>
                             <h3 id="card-question" class="text-lg sm:text-2xl font-bold leading-relaxed text-slate-800 dark:text-slate-100">
                                 質問が表示されます
                             </h3>
                         </div>
                         <div class="text-center text-xs text-slate-400">
-                            ヒント: タップすると解答を表示します
+                            タップまたはクリックで裏面の解答を表示
                         </div>
                     </div>
 
+                    <!-- Back (Answer) -->
                     <div class="absolute inset-0 w-full h-full p-6 sm:p-8 flex flex-col justify-between backface-hidden rotate-y-180 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-indigo-950/40">
                         <div class="flex justify-between items-center">
                             <span class="px-2.5 py-1 bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 rounded-full text-xs font-bold">
-                                解答・解説
+                                解答・重要キーワード
                             </span>
-                            <button onclick="event.stopPropagation(); speakCurrentCard();" class="text-slate-500 hover:text-blue-600 p-2 rounded-full hover:bg-white/50 transition" title="読み上げ">
-                                <i class="fa-solid fa-volume-high text-lg"></i>
-                            </button>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="event.stopPropagation(); toggleStarCurrent();" class="text-slate-300 hover:text-amber-400 transition" title="お気に入り登録">
+                                    <i id="card-star-icon-back" class="fa-solid fa-star text-lg"></i>
+                                </button>
+                                <button onclick="event.stopPropagation(); speakCurrentCard();" class="text-slate-500 hover:text-blue-600 p-2 rounded-full hover:bg-white/50 transition" title="音声読み上げ">
+                                    <i class="fa-solid fa-volume-high text-lg"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="my-auto py-2 text-center">
                             <p class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1">ANSWER</p>
@@ -189,7 +202,7 @@
                             </p>
                         </div>
                         <div class="text-center text-xs text-slate-400">
-                            カード下のボタンで習熟度を判定してください
+                            下の「覚えた」「もう一度」で習熟度を記録
                         </div>
                     </div>
                 </div>
@@ -199,7 +212,7 @@
                 <div class="grid grid-cols-2 gap-3 sm:gap-4">
                     <button onclick="markFlashcard(false)" class="py-3 px-4 bg-rose-100 hover:bg-rose-200 text-rose-800 dark:bg-rose-950/60 dark:hover:bg-rose-900 dark:text-rose-200 font-bold rounded-xl shadow-sm transition flex items-center justify-center space-x-2">
                         <i class="fa-solid fa-xmark text-lg"></i>
-                        <span>まだ (復習する)</span>
+                        <span>もう一度 (復習)</span>
                     </button>
                     <button onclick="markFlashcard(true)" class="py-3 px-4 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 dark:bg-emerald-950/60 dark:hover:bg-emerald-900 dark:text-emerald-200 font-bold rounded-xl shadow-sm transition flex items-center justify-center space-x-2">
                         <i class="fa-solid fa-check text-lg"></i>
@@ -223,18 +236,18 @@
         <section id="mode-input" class="mode-section space-y-6 hidden">
             <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex justify-between items-center">
                 <div>
-                    <span class="text-xs text-slate-500 dark:text-slate-400">文字入力テスト</span>
+                    <span class="text-xs text-slate-500 dark:text-slate-400">一問一答 文字入力テスト</span>
                     <h3 id="input-category-display" class="font-bold text-sm text-blue-600 dark:text-blue-400">全分野</h3>
                 </div>
                 <div class="text-right">
-                    <span id="input-progress-text" class="text-xs font-bold text-slate-500">問 1 / 45</span>
+                    <span id="input-progress-text" class="text-xs font-bold text-slate-500">出題数: 1</span>
                     <div id="input-score-text" class="text-sm font-bold text-emerald-600">正解数: 0</div>
                 </div>
             </div>
 
             <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-md space-y-4">
                 <span class="px-2.5 py-1 bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 rounded-full text-xs font-bold">
-                    一問一答 入力形式
+                    記述・語句入力
                 </span>
                 <h2 id="input-question-text" class="text-lg sm:text-xl font-bold leading-relaxed text-slate-800 dark:text-slate-100 min-h-[60px]">
                     問題文がここに入ります。
@@ -242,11 +255,11 @@
 
                 <form id="input-form" onsubmit="submitInputAnswer(event)" class="space-y-4 pt-2">
                     <div>
-                        <label for="user-text-input" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">あなたの解答 (ひらがな・部分一致対応):</label>
+                        <label for="user-text-input" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">あなたの解答（ひらがな・漢字・英語の表記揺れ対応）:</label>
                         <div class="flex gap-2">
-                            <input type="text" id="user-text-input" autocomplete="off" placeholder="ここに用語・単語を入力..." class="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <input type="text" id="user-text-input" autocomplete="off" placeholder="ここに用語を入力..." class="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
                             <button type="submit" id="input-submit-btn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition shrink-0">
-                                回答する
+                                判定
                             </button>
                         </div>
                     </div>
@@ -275,7 +288,7 @@
             <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-wrap justify-between items-center gap-3">
                 <div class="flex items-center space-x-3">
                     <span class="px-2.5 py-1 bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 rounded-full text-xs font-bold">
-                        8択極限トレーニング
+                        8択極限チャレンジ（全10問）
                     </span>
                     <span id="quiz8-counter" class="text-xs font-bold text-slate-500">第 1 / 10 問</span>
                 </div>
@@ -287,7 +300,7 @@
                     <label class="flex items-center cursor-pointer text-xs font-medium text-slate-500">
                         <input type="checkbox" id="timer-toggle" checked onchange="toggleTimerSetting()" class="sr-only peer">
                         <div class="w-8 h-4 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-slate-600 peer-checked:bg-blue-600 relative"></div>
-                        <span class="ml-1.5">タイマー</span>
+                        <span class="ml-1.5">制限時間</span>
                     </label>
                 </div>
             </div>
@@ -320,17 +333,18 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div class="relative md:col-span-2">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
-                        <input type="text" id="list-search-input" oninput="filterMasterList()" placeholder="キーワードで問題・用語・解説を検索..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <input type="text" id="list-search-input" oninput="filterMasterList()" placeholder="キーワードで問題・太字用語・解説を検索..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                     </div>
                     <div>
                         <select id="list-category-select" onchange="filterMasterList()" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl px-3 py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500">
                             <option value="all">全単元を表示</option>
+                            <option value="fav">⭐ スター付きのみ表示</option>
                         </select>
                     </div>
                 </div>
                 <div class="flex justify-between items-center text-xs text-slate-500 pt-1">
-                    <span id="list-count-info">全 45 件中 45 件表示</span>
-                    <span class="italic"><i class="fa-solid fa-volume-high"></i> アイコンで音声読み上げ</span>
+                    <span id="list-count-info">全 0 件中 0 件表示</span>
+                    <span class="italic"><i class="fa-solid fa-volume-high"></i> アイコンで読み上げ / ⭐で保存</span>
                 </div>
             </div>
 
@@ -338,61 +352,114 @@
         </section>
     </main>
 
-    <!-- App JavaScript & Data -->
+    <!-- App JavaScript & Comprehensive Data -->
     <script>
+        // 教科書（テーマ13〜19およびSTEP UP等の政治制度・社会・国会・内閣・地方自治・メディア・世界の政治体制）完全網羅データ
         const CIVICS_DATA = [
-            { id: 1, category: "国会のしくみと役割", question: "日本国憲法において「国権の最高機関」であり、「国の唯一の立法機関」と定められている機関は？", answer: "国会", reading: "こっかい", detail: "憲法第41条。主権者である国民の代表によって構成されるため最高機関とされる。" },
-            { id: 2, category: "国会のしくみと役割", question: "日本の国会のように、衆議院と参議院の2つの議院から構成される仕組みを何というか？", answer: "二院制", reading: "にいんせい", detail: "慎重な審議を行い、一方の議院の行き過ぎを抑える（抑止）役割を持つ。" },
-            { id: 3, category: "国会のしくみと役割", question: "毎年1回、1月に召集され、会期が150日間（予算審議など）定められている国会は？", answer: "常会", reading: "じょうかい", detail: "通常国会とも呼ばれ、翌年度の全予算審議や主要法律案の審議を行う。" },
-            { id: 4, category: "国会のしくみと役割", question: "内閣が必要と認めたとき、またはどちらかの議院の総議員の4分の1以上の要求で召集される国会は？", answer: "臨時会", reading: "りんじかい", detail: "臨時国会。補正予算や緊急の事件・法案審議のために開かれる。" },
-            { id: 5, category: "国会のしくみと役割", question: "衆議院解散後の総選挙の日から30日以内に召集され、内閣総理大臣の指名を行う国会は？", answer: "特別会", reading: "とくべつかい", detail: "特別国会。衆議院解散後に行われる。" },
-            { id: 6, category: "国会のしくみと役割", question: "衆議院の解散中、国に緊急の必要があるときに内閣の求めによって開かれる参議院の会合は？", answer: "緊急集会", reading: "きんきゅうしゅうかい", detail: "参議院のみで開催され、取られた措置は次の国会で衆議院の同意が必要。" },
-            { id: 7, category: "国会のしくみと役割", question: "法律案や予算などで両院の議決が一致しない場合、一致を図るために設置される機関は？", answer: "両院協議会", reading: "りょういんきょうぎかい", detail: "各議院から10名ずつ選出。予算・条約指名で成案が得られない場合は衆議院の議決が優先される。" },
-            { id: 8, category: "国会のしくみと役割", question: "任期が短く解散がある衆議院の議決を参議院より優先させる原則を何というか？", answer: "衆議院の優越", reading: "しゅうぎいんのおうえつ", detail: "国民の意思（世論）をより迅速・正確に反映させるため憲法で認められている。" },
-            { id: 9, category: "国会のしくみと役割", question: "衆議院で可決し参議院で否決された法律案は、衆議院で出席議員のどれだけの多数で再可決すれば成立するか？", answer: "3分の2以上", reading: "さんぶんのにいじょう", detail: "衆議院の再可決規定（憲法第59条）。" },
-            { id: 10, category: "国会のしくみと役割", question: "不正を行ったり重大な非行のあった裁判官を辞めさせるかどうかを判断するために国会に設置される裁判所は？", answer: "弾劾裁判所", reading: "だんがいさいばんしょ", detail: "衆参両院の議員各7名（計14名）の裁判員で構成される。" },
-            { id: 11, category: "国会のしくみと役割", question: "衆議院のみに認められている、内閣に対して政治的責任を追及し辞職を求める決議は？", answer: "内閣不信任の決議", reading: "ないかくふしんんにんのけつぎ", detail: "可決された場合、内閣は10日以内に衆議院を解散するか総辞職しなければならない。" },
-            { id: 12, category: "国会のしくみと役割", question: "憲法改正の発議を行うために必要な、各議院の賛成割合は？", answer: "総議員の3分の2以上", reading: "そうぎいんのさんぶんのにいじょう", detail: "発議後、国民投票において過半数の賛成を得ることで改正が成立する。" },
-            { id: 13, category: "内閣のしくみと役割", question: "内閣総理大臣とその他の国務大臣で構成され、行政権を担当する最高機関は？", answer: "内閣", reading: "ないかく", detail: "憲法第65条「行政権は、内閣に属する」。" },
-            { id: 14, category: "内閣のしくみと役割", question: "内閣総理大臣およびその他の国務大臣は、憲法上どのような人物（資格）でなければならないか？", answer: "文民", reading: "ぶんみん", detail: "文民統制（シビリアン・コントロール）。現役の軍人・自衛官でないこと。" },
-            { id: 15, category: "内閣のしくみと役割", question: "内閣がその首長（内閣総理大臣）のもとで方針を決定し、全閣僚が一致して責任を負う原則を何というか？", answer: "閣内一致の原則", reading: "かくないいっちのげんそく", detail: "閣議は全員一致が原則であり、合議制として国会に対し連帯責任を負う。" },
-            { id: 16, category: "内閣のしくみと役割", question: "中央省庁の幹部人事などを一元管理し、内閣主導の政治（政治主導）を強めるために2014年に設置された機関は？", answer: "内閣人事局", reading: "ないかくじんじきょく", detail: "幹部官僚の人事を首相官邸が掌握することで官僚機構の統制を図る。" },
-            { id: 17, category: "内閣のしくみと役割", question: "行政機関の違法・不当な行為による住民の苦情を受け付け、中立な立場から調査・是正勧告を行う制度（官民苦情処理員）は？", answer: "オンブズマン制度", reading: "おんぶずまんせいど", detail: "行政監察官制度。地方自治体などで導入が進んでいる。" },
-            { id: 18, category: "内閣のしくみと役割", question: "公務員が特定の政党や天下り企業ではなく、国民全体のために働くという憲法上の位置付けは？", answer: "全体の奉仕者", reading: "ぜんたいのほうしゃ", detail: "憲法第15条「すべて公務員は、全体の奉仕者であつて、一部の奉仕者ではない」。" },
-            { id: 19, category: "地方自治のしくみ", question: "地方自治は民主主義の基礎であり訓練の場であることから、イギリスの政治学者ブライスが遺した有名な言葉は？", answer: "地方自治は民主主義の学校", reading: "ちほうじちはみんしゅしゅぎのがっこう", detail: "住民参加による自己決定が民主主義の根幹であることを表す。" },
-            { id: 20, category: "地方自治のしくみ", question: "地方公共団体（自治体）が、国の法律の範囲内で独自に制定する独自の決まりは？", answer: "条例", reading: "じょうれい", detail: "地方議会が議決により制定する。" },
-            { id: 21, category: "地方自治のしくみ", question: "住民が自らの意思で直接、首長の解職や条例の制定などを求める権利を何というか？", answer: "直接請求権", reading: "ちょくせつせいきゅうけん", detail: "地方自治法に基づき、有権者の一定割合以上の署名が必要。" },
-            { id: 22, category: "地方自治のしくみ", question: "条例の制定や改廃を直接請求する場合、有権者のどれだけの署名が必要か？", answer: "50分の1以上", reading: "ごじゅうぶんのいいじょう", detail: "請求先は地方公共団体の首長（知事・市町村長）。" },
-            { id: 23, category: "地方自治のしくみ", question: "首長や議員の解職（リコール）を直接請求する場合、有権者のどれだけの署名が必要か？", answer: "3分の1以上", reading: "さんぶんのいいじょう", detail: "請求先は選挙管理委員会。解職投票で過半数の同意があれば失職する。" },
-            { id: 24, category: "地方自治のしくみ", question: "国が指定する特定の地方公共団体だけに適用される特別な法律を制定する際に行われる住民投票は？", answer: "地方自治特別法の住民投票", reading: "ちほうじちとくべつほうのじゅうみんとうひょう", detail: "憲法第95条。住民投票で過半数の同意を得なければ制定できない。" },
-            { id: 25, category: "地方自治のしくみ", question: "地方自治体間の財力格差をなくすため、国から用途を定めずに交付される資金は？", answer: "地方交付税交付金", reading: "ちほうこうふぜいこうふきん", detail: "地方自治体の独自の財源（一般財源）として自由に使用できる。" },
-            { id: 26, category: "民主政治と政治参加", question: "選出された代表者が議会で話し合い、政策を決定する政治の仕組みは？", answer: "間接民主制", reading: "かんせつみんしゅせい", detail: "代議制ともいう。国民投票などの直接民主制と併用される。" },
-            { id: 27, category: "民主政治と政治参加", question: "憲法改正や重要政策について、国民が直接賛否を投票して決定する制度は？", answer: "国民投票", reading: "こくみんとうひょう", detail: "レファレンダム。憲法改正手続法などに基づく。" },
-            { id: 28, category: "民主政治と政治参加", question: "1つの選挙区から1人の議員を選出する選挙制度は？", answer: "小選挙区制", reading: "しょうせんきょくせい", detail: "大政党に有利で政局が安定しやすいが、死票が多くなるデメリットがある。" },
-            { id: 29, category: "民主政治と政治参加", question: "各政党の得票率に応じて議席を配分する選挙制度は？", answer: "比例代表制", reading: "ひれいだいひょうせい", detail: "死票が少なく小政党も議席を得やすいが、小会派が乱立する可能性がある。" },
-            { id: 30, category: "民主政治と政治参加", question: "日本の衆議院議員選挙で採用されている、小選挙区制と比例代表制を組み合わせた制度は？", answer: "小選挙区比例代表並立制", reading: "しょうせんきょくひれいだいひょうへいりつせい", detail: "重複立候補（両方に立候補すること）が認められている。" },
-            { id: 31, category: "民主政治と政治参加", question: "落選者の票など、議席に結びつかなかった無効と同等な投票票のことを何というか？", answer: "死票", reading: "しひょう", detail: "小選挙区制では死票の割合が高くなりやすい。" },
-            { id: 32, category: "民主政治と政治参加", question: "選挙区ごとの人口の偏りにより、1票が議員選出に与える影響力に不平等が生じる問題を何というか？", answer: "1票の格差", reading: "いっぴょうのかくさ", detail: "最高裁判所で「違憲状態」判決が出されるなど長年の政治的課題。" },
-            { id: 33, category: "民主政治と政治参加", question: "同じ理念や政策を持つ人々が政権を獲得し政策を実現するために結成する組織は？", answer: "政党", reading: "せいとう", detail: "政党中心の政治を政党政治という。" },
-            { id: 34, category: "民主政治と政治参加", question: "政党の健全な活動を支援するため、国庫から政党に交付される資金（国民1人当たり250円相当）は？", answer: "政党交付金", reading: "せいとうこうふきん", detail: "政党助成法に基づき支給される。" },
-            { id: 35, category: "民主政治と政治参加", question: "政党が選挙の際に掲げる、公約や具体的な政権公約・数値目標を示した施策集は？", answer: "マニフェスト", reading: "まにふぇすと", detail: "政権公約。実現の期限や数値目標、財源を明記する。" },
-            { id: 36, category: "メディアと世論", question: "新聞・テレビ・インターネットなど、社会の大多数に情報を伝達する媒体を何というか？", answer: "マスメディア", reading: "ますまでにあ", detail: "立法・行政・司法に次ぐ「第四の権力」と呼ばれることもある。" },
-            { id: 37, category: "メディアと世論", question: "マスメディアが特定のニュースやテーマを重点的に報じることで、人々の関心事やアジェンダが決まる現象は？", answer: "アジェンダセッティング", reading: "あじぇんだせっていんぐ", detail: "議題設定機能。メディアの報道姿勢が世論形成に強い影響を与える。" },
-            { id: 38, category: "メディアと世論", question: "SNSなどで自分と同質の意見ばかりに接した結果、自分の考えが正解だと過剰に信じ込んでしまう現象は？", answer: "エコーチェンバー", reading: "えこーちぇんばー", detail: "閉ざされた空間で意見が反響（エコー）増幅される現象。" },
-            { id: 39, category: "メディアと世論", question: "アルゴリズムにより自分好みの情報だけが表示され、見たくない情報から隔離されてしまう状態は？", answer: "フィルターバブル", reading: "ふぃるたーばぶる", detail: "泡（バブル）の中に包まれたように偏った情報空間に孤立する。" },
-            { id: 40, category: "メディアと世論", question: "インターネット等の情報を鵜呑みにせず、主体的に真偽を見極め批判的に読み解く能力は？", answer: "メディア・リテラシー", reading: "までにありてらしー", detail: "フェイクニュースに惑わされないための情報活用能力。" },
-            { id: 41, category: "世界の政治体制", question: "イギリスや日本のように、内閣が議会の信任に基づいて成立し、議会に対して責任を負う体制は？", answer: "議院内閣制", reading: "ぎいんないかくせい", detail: "議会と内閣が密接に連携する政治体制。" },
-            { id: 42, category: "世界の政治体制", question: "アメリカのように、国民から選ばれた大統領が強力な行政権を持ち、厳格に三権分立が行われる体制は？", answer: "大統領制", reading: "だいとうりょうせい", detail: "大統領は法案提出権や解散権を持たず、法案拒否権を持つ。" },
-            { id: 43, category: "世界の政治体制", question: "イギリスの野党が政権交代に備えて組織する「影の内閣」のことを英語で何というか？", answer: "シャドー・キャビネット", reading: "しゃどーきゃびねっと", detail: "与党の閣僚に対抗する担当者をあらかじめ配置しておく仕組み。" },
-            { id: 44, category: "世界の政治体制", question: "中国のように、全国人民代表大会（全人代）に最高権力が集中する政治体制は？", answer: "人民代表大会制度", reading: "じんみんだいひょうたいかいせいど", detail: "中国共産党による一党支配（事実上の指導体制）のもと運営される。" },
-            { id: 45, category: "世界の政治体制", question: "国民が行政の決定の参考にできるよう、公共事業などの案について一般から意見を公募する手続きは？", answer: "パブリックコメント", reading: "ぱぶりっくこめんと", detail: "意見公募手続。行政の透明性と住民意思の反映を図る。" }
+            // テーマ13: 私たちの民主政治
+            { id: 1, category: "私たちの民主政治", question: "政治の決定に際して人々に行使される、強制力をもった力や能力を何というか？", answer: "政治的権力", reading: "せいじてきけんりょく", detail: "国家や自治体が社会の秩序を保ち決まりを執行するための強制力。" },
+            { id: 2, category: "私たちの民主政治", question: "マックス・ウェーバーが提唱した支配の分類において、憲法や法律など正当な手続きで制定された法に基づく支配を何というか？", answer: "合法的支配", reading: "ごうほうてきしはい", detail: "近代国家の官僚制の根拠とされる、法に基づく正当な支配形式。" },
+            { id: 3, category: "私たちの民主政治", question: "すべての人が対等に政治決定に参加し、みんなの意見を反映させていく政治の考え方を何というか？", answer: "民主主義", reading: "みんしゅしゅぎ", detail: "人民（国民）が主権を持ち、自らの意思で政治を行う原則。" },
+            { id: 4, category: "私たちの民主政治", question: "国民自身が直接集まり議論をして方針や政策を決定する政治の形態は？", answer: "直接民主制", reading: "ちょくせつみんしゅせい", detail: "古代ギリシャの民会や、現代の国民投票・住民投票などが例。" },
+            { id: 5, category: "私たちの民主政治", question: "代表者（議員）を投票で選び、その代表者が議会で話し合いを行って政策を決定する制度は？", answer: "間接民主制", reading: "かんせつみんしゅせい", detail: "代議制とも呼ばれる。現代の主要国家で広く採用されている。" },
+            { id: 6, category: "私たちの民主政治", question: "1920〜40年代にイタリアのファシズムやドイツのナチズムなどに代表される、個人の自由や権利を抑圧した独裁政治を何というか？", answer: "全体主義", reading: "ぜんたいしゅぎ", detail: "国家全体の利益を最優先し、個人の尊厳を否定する政治体制。" },
+            { id: 7, category: "私たちの民主政治", question: "多数決の原理において、少数派の意見を無視して決定を下し少数派の権利を侵害する危険性を何というか？", answer: "多数者の専制", reading: "たすうしゃのせんせい", detail: "トクヴィルやミルが警告した、多数派による独裁的弊害。" },
+            { id: 8, category: "私たちの民主政治", question: "政治に対する関心が薄れ、投票に行かないなど政治参加を放棄してしまう状態を何というか？", answer: "政治的無関心", reading: "せいじてきむかんしん", detail: "政治的有効性感覚の低下や生活の充足感などが原因で生じる。" },
+            { id: 9, category: "私たちの民主政治", question: "現代社会において政治行政の専門化・複雑化が進み、行政機関の役割や権限が非常に大きくなった状態を何というか？", answer: "行政国家化", reading: "ぎょうせいこっかか", detail: "議会中心の立法国家から、実質的に行政が中心となる体制への変化。" },
+
+            // テーマ14: 地方自治のしくみと役割
+            { id: 10, category: "地方自治のしくみ", question: "地方自治は民主主義の基礎であり訓練の場であることから、イギリスの政治学者ブライスが遺した有名な言葉は？", answer: "地方自治は民主主義の学校", reading: "ちほうじちはみんしゅしゅぎのがっこう", detail: "身近な地域政治への参加が国政への関心を育てる基本となる。" },
+            { id: 11, category: "地方自治のしくみ", question: "憲法第92条に定める、住民の意思に基づいて行われる「住民自治」と、国から独立して行われる「団体自治」を合わせた概念は？", answer: "地方自治の本旨", reading: "ちほうじちのほんし", detail: "憲法が保障する地方自治の根幹原則。" },
+            { id: 12, category: "地方自治のしくみ", question: "地方公共団体（自治体）が、国の法律の範囲内で独自に制定する地域の決まりは？", answer: "条例", reading: "じょうれい", detail: "地方議会が議決によって制定する法規範。" },
+            { id: 13, category: "地方自治のしくみ", question: "住民が直接投票で選ぶ「首長（知事や市町村長）」と「地方議会議員」の双方が独立して対等に対峙する制度は？", answer: "二元代表制", reading: "にげんだいひょうせい", detail: "首長と議会が互いに牽制（チェック＆バランス）し合う。" },
+            { id: 14, category: "地方自治のしくみ", question: "住民が自らの意思で直接、首長や議員の解職、条例の制定などを求める権利を何というか？", answer: "直接請求権", reading: "ちょくせつせいきゅうけん", detail: "地方自治法に基づき、有権者の一定割合以上の署名が必要。" },
+            { id: 15, category: "地方自治のしくみ", question: "条例の制定や改廃を直接請求（イニシアティブ）する場合、有権者のどれだけの署名が必要か？", answer: "50分の1以上", reading: "ごじゅうぶんのいいじょう", detail: "請求先は地方公共団体の首長（知事・市町村長）。" },
+            { id: 16, category: "地方自治のしくみ", question: "首長や議員の解職（リコール）を直接請求する場合、有権者のどれだけの署名が必要か？", answer: "3分の1以上", reading: "さんぶんのいいじょう", detail: "請求先は選挙管理委員会。投票で過半数の同意があれば失職する。" },
+            { id: 17, category: "地方自治のしくみ", question: "国が特定の一つの地方公共団体のみに適用される特別な法律を制定する際に行われる住民投票は？", answer: "地方自治特別法の住民投票", reading: "ちほうじちとくべつほうのじゅうみんとうひょう", detail: "憲法第95条。住民投票（レファレンダム）で過半数の同意が必要。" },
+            { id: 18, category: "地方自治のしくみ", question: "地方自治体間の財力格差を補正するため、国から用途を指定されずに交付される資金は？", answer: "地方交付税交付金", reading: "ちほうこうふぜいこうふきん", detail: "自治体の自由な裁量で使える「一般財源」。" },
+            { id: 19, category: "地方自治のしくみ", question: "国が特定事業や施策の奨励・助成のために使い道を定めて自治体に支給する国庫支出金などは何に分類されるか？", answer: "特定財源", reading: "とくていざいげん", detail: "使い道が限定されている財源（国庫支出金など）。" },
+            { id: 20, category: "地方自治のしくみ", question: "地方自治体の全歳入に対する自前で集めた地方税などの割合が低い（約3〜4割）状態を表す言葉は？", answer: "3割自治", reading: "さんわりじち", detail: "自主財源が少なく国への依存度が高い状況を揶揄した表現。" },
+            { id: 21, category: "地方自治のしくみ", question: "国から地方へ権限と財源を移譲し、地方の自立を高めるために1999年に制定・推進された一連の改革・法律は？", answer: "地方分権一括法", reading: "ちほうぶんけんいっかつほう", detail: "機関委任事務が廃止され、自治事務と法定受託事務に整理された。" },
+            { id: 22, category: "地方自治のしくみ", question: "行政の違法・不当な行為について住民の苦情を受け付け、中立的に調査・是正勧告を行う苦情処理人制度は？", answer: "オンブズマン制度", reading: "おんぶずまんせいど", detail: "行政監察官制度。行政に対する住民の監視機能を高める。" },
+            { id: 23, category: "地方自治のしくみ", question: "どの地域に住んでいても人間として最低限度の生活水準を保障するという考え方は？", answer: "ナショナル・ミニマム", reading: "なしょなるみにまむ", detail: "国や自治体が確保すべき最低限の生活福祉基準。" },
+
+            // テーマ15: 国会のしくみと役割
+            { id: 24, category: "国会のしくみと役割", question: "日本国憲法第41条において「国権の最高機関」であり、「国の唯一の立法機関」と規定されている機関は？", answer: "国会", reading: "こっかい", detail: "国民の代表で構成される立法を担当する最高機関。" },
+            { id: 25, category: "国会のしくみと役割", question: "日本の国会のように、衆議院と参議院の2つの議院で構成される仕組みを何というか？", answer: "二院制", reading: "にいんせい", detail: "両院制。慎重な審議と一方の議院の独走を防ぐ目的。" },
+            { id: 26, category: "国会のしくみと役割", question: "毎年1回、1月に召集され、会期150日間で翌年度予算などを審議する国会は？", answer: "常会", reading: "じょうかい", detail: "通常国会。会期延長は1回まで認められる。" },
+            { id: 27, category: "国会のしくみと役割", question: "内閣が必要と認めたとき、またはどちらかの議院の総議員の4分の1以上の要求で召集される国会は？", answer: "臨時会", reading: "りんじかい", detail: "臨時国会。補正予算案や緊急課題の審議のために開催。" },
+            { id: 28, category: "国会のしくみと役割", question: "衆議院解散後の総選挙の日から30日以内に召集され、内閣総理大臣の指名を行う国会は？", answer: "特別会", reading: "とくべつかい", detail: "特別国会。新内閣の誕生につながる。" },
+            { id: 29, category: "国会のしくみと役割", question: "衆議院の解散中、国に緊急の必要があるときに内閣の求めで開かれる参議院の会合は？", answer: "緊急集会", reading: "きんきゅうしゅうかい", detail: "措置は次の国会で衆議院の同意が得られない場合、効力を失う。" },
+            { id: 30, category: "国会のしくみと役割", question: "法律案や予算などで衆参の議決が一致しない場合、成案を得るために設置される機関は？", answer: "両院協議会", reading: "りょういんきょうぎかい", detail: "各議院から10名ずつ（計20名）選出されて協議する。" },
+            { id: 31, category: "国会のしくみと役割", question: "任期が短く解散がある衆議院の議決を、参議院より優先させる憲法上の原則は？", answer: "衆議院の優越", reading: "しゅうぎいんのおうえつ", detail: "国民の意思（世論）をより迅速・直近で反映させるための仕組み。" },
+            { id: 32, category: "国会のしくみと役割", question: "衆議院で可決し参議院で異なった議決となった法律案は、衆議院で出席議員のどれだけの多数で再可決すれば成立するか？", answer: "3分の2以上", reading: "さんぶんのにいじょう", detail: "衆議院の再可決（憲法第59条）。" },
+            { id: 33, category: "国会のしくみと役割", question: "衆議院のみに先議権（先に審議する権利）が認められている案件は？", answer: "予算の先議権", reading: "よさんのせんぎけん", detail: "予算案は必ず衆議院に先に提出され審議される。" },
+            { id: 34, category: "国会のしくみと役割", question: "衆議院のみに認められている、内閣の政治責任を追及して辞職を迫る決議は？", answer: "内閣不信任の決議", reading: "ないかくふしんんにんのけつぎ", detail: "可決された場合、内閣は10日以内に衆議院解散か総辞職を選択する。" },
+            { id: 35, category: "国会のしくみと役割", question: "不正を行ったり著しい非行のあった裁判官を罷免（辞めさせる）するために国会に設置される裁判所は？", answer: "弾劾裁判所", reading: "だんがいさいばんしょ", detail: "衆参両院の議員各7名（計14名）の裁判員で構成。" },
+            { id: 36, category: "国会のしくみと役割", question: "憲法改正の発議を行うために必要な、衆参各議院の賛成要件は？", answer: "総議員の3分の2以上", reading: "そうぎいんのさんぶんのにいじょう", detail: "発議後、国民投票で過半数の賛成を得て改正が成立する。" },
+            { id: 37, category: "国会のしくみと役割", question: "国会議員が会期中に逮捕されない権利を何というか？", answer: "不逮捕特権", reading: "ふたいほとっけん", detail: "院外の現行犯や所属議院の許諾がある場合を除き逮捕されない。" },
+            { id: 38, category: "国会のしくみと役割", question: "国会議員が院内で行った発言や表決について、院外で責任を問われない権利は？", answer: "免責特権", reading: "めんせきとっけん", detail: "自由な言論・審議活動を保障するための特権。" },
+
+            // テーマ16: 内閣のしくみと役割
+            { id: 39, category: "内閣のしくみと役割", question: "内閣総理大臣とその他の国務大臣で構成され、国家の行政権を担当する機関は？", answer: "内閣", reading: "ないかく", detail: "憲法第65条「行政権は、内閣に属する」。" },
+            { id: 40, category: "内閣のしくみと役割", question: "内閣総理大臣および国務大臣は、憲法上どのような人物（資格）でなければならないか？", answer: "文民", reading: "ぶんみん", detail: "シビリアン・コントロール（文民統制）。現役軍人・自衛官でない者。" },
+            { id: 41, category: "内閣のしくみと役割", question: "内閣がその首長のもとで方針を決定し、全閣僚が一致して国会に対し連帯責任を負う原則は？", answer: "閣内一致の原則", reading: "かくないいっちのげんそく", detail: "閣議決定は全閣僚の一致で行う合議制の原則。" },
+            { id: 42, category: "内閣のしくみと役割", question: "内閣総理大臣の指名手続きにおいて、国会議員の中から指名する機関は？", answer: "国会", reading: "こっかい", detail: "衆議院と参議院で指名。一致しない場合は衆議院の優越が適用される。" },
+            { id: 43, category: "内閣のしくみと役割", question: "行政機関が法律の執行に際して行政指導や命令を下す強い権限のことを何というか？", answer: "許認可権", reading: "きょにんかけん", detail: "許認可や指導の権限が官僚機構の強大な力（官僚主導）の源泉となった。" },
+            { id: 44, category: "内閣のしくみと役割", question: "行政指導の透明化や不透明な許認可行政を防ぐために1993年に制定された法律は？", answer: "行政手続法", reading: "ぎょうせいてつづきほう", detail: "行政処分の基準や不利益処分の手続きを明確化した。" },
+            { id: 45, category: "内閣のしくみと役割", question: "国の行政機関が保有する情報の開示を請求する権利を国民に認めた1999年制定の法律は？", answer: "情報公開法", reading: "じょうほうこうかいほう", detail: "知る権利に応え、知る機会を保障する法律。" },
+            { id: 46, category: "内閣のしくみと役割", question: "中央省庁の幹部人事などを一元管理し、官僚主導から内閣（首相官邸）主導の政治を目指して2014年に設置された機関は？", answer: "内閣人事局", reading: "ないかくじんじきょく", detail: "各省庁幹部人事を内閣が一括掌握する。" },
+            { id: 47, category: "内閣のしくみと役割", question: "公務員が特定の政党や企業ではなく、国民全体のために働く存在として規定されている憲法上の位置付けは？", answer: "全体の奉仕者", reading: "ぜんたいのほうしゃ", detail: "憲法第15条第2項。" },
+
+            // テーマ17: 政治参加と選挙
+            { id: 48, category: "政治参加と選挙", question: "性別・財産・納税額などによる制限を設けず、すべての成人に参政権を認める選挙の原則は？", answer: "普通選挙", reading: "ふつうせんきょ", detail: "18歳以上のすべての国民に選挙権が与えられている。" },
+            { id: 49, category: "政治参加と選挙", question: "貧富や性別に関わらず、有権者1人あたり1票の価値を等しく扱う選挙の原則は？", answer: "平等選挙", reading: "びょうどうせんきょ", detail: "1票の格差の問題とも密接に関わる原則。" },
+            { id: 50, category: "政治参加と選挙", question: "誰に投票したかを他人に知られないよう、無記名で投票する選挙の原則は？", answer: "秘密選挙", reading: "ひみつせんきょ", detail: "投票の自由と不当な圧力を防ぐ。" },
+            { id: 51, category: "政治参加と選挙", question: "有権者が代表者を間に挟まず、直接代表者を選挙で選ぶ原則は？", answer: "直接選挙", reading: "ちょくせつせんきょ", detail: "間接選挙（かつてのアメリカ大統領選選挙人方式など）に対する言葉。" },
+            { id: 52, category: "政治参加と選挙", question: "1つの選挙区から1人の議員を選出する選挙制度は？", answer: "小選挙区制", reading: "しょうせんきょくせい", detail: "二大政党制になりやすく政局が安定するが、死票が多くなる。" },
+            { id: 53, category: "政治参加と選挙", question: "各政党の得票率に応じて議席を配分する選挙制度は？", answer: "比例代表制", reading: "ひれいだいひょうせい", detail: "死票が少なく小政党も議席を得やすい。" },
+            { id: 54, category: "政治参加と選挙", question: "日本の衆議院議員選挙で採用されている、小選挙区制と比例代表制を組み合わせた制度は？", answer: "小選挙区比例代表並立制", reading: "しょうせんきょくひれいだいひょうへいりつせい", detail: "小選挙区と比例代表の重複立候補が可能。" },
+            { id: 55, category: "政治参加と選挙", question: "落選者に投じられた票など、議席結びつかずに無駄になった投票のことを何というか？", answer: "死票", reading: "しひょう", detail: "小選挙区制では死票の割合が高くなりやすい。" },
+            { id: 56, category: "政治参加と選挙", question: "選挙区ごとの人口偏在により、1票が議員選出に与える影響力（価値）に不平等が生じる問題を何というか？", answer: "一票の格差", reading: "いっぴょうのかくさ", detail: "最高裁判所で「違憲状態」や「違憲」の判決が出される重要課題。" },
+            { id: 57, category: "政治参加と選挙", question: "投票日当日に都合が悪く投票所に行けない人のため、事前投票を可能にする制度は？", answer: "期日前投票制度", reading: "きじつぜんとうひょうせいど", detail: "投票率向上のための利便性向上措置。" },
+            { id: 58, category: "政治参加と選挙", question: "海外に在住する日本国民が、国外にいながら国政選挙に投票できる制度は？", answer: "在外投票制度", reading: "ざいがいとうひょうせいど", detail: "在外公館等で投票が行われる。" },
+
+            // テーマ18: 政党と利益集団
+            { id: 59, category: "政党と利益集団", question: "同じ政治理念や政策を持つ人々が、政権を獲得し政策を実現するために結成する組織は？", answer: "政党", reading: "せいとう", detail: "政党を中心に運営される政治を政党政治という。" },
+            { id: 60, category: "政党と利益集団", question: "2つの主要な大政党が存在し、交互に政権を担当する政党政治の形態は？", answer: "二大政党制", reading: "にだいせいとうせい", detail: "アメリカやイギリスなどが代表例。政権交代が起こりやすい。" },
+            { id: 61, category: "政党と利益集団", question: "3つ以上の有力な政党が存在し、単独で過半数を取れず連立政権が形成されやすい政治形態は？", answer: "多党制", reading: "たとうせい", detail: "ドイツやフランスなどヨーロッパ諸国に多い。" },
+            { id: 62, category: "政党と利益集団", question: "複数の政党が提携・協力して構成する内閣・政権のことを何というか？", answer: "連立政権", reading: "れんりつせいけん", detail: "多党制のもとで過半数を確保するために組まれる。" },
+            { id: 63, category: "政党と利益集団", question: "政治資金の収支の公開や政治寄付の制限などを定めた法律は？", answer: "政治資金規正法", reading: "せいじしきんきせいほう", detail: "政治献金の透明化を図る法律。" },
+            { id: 64, category: "政党と利益集団", question: "政党助成法に基づき、国庫から政党の活動費用として交付される資金は？", answer: "政党交付金", reading: "せいとうこうふきん", detail: "国民1人あたり年間約250円の負担で各政党に分配。" },
+            { id: 65, category: "政党と利益集団", question: "特定の業界や職種の利益を守り促進するため、政府や国会へ働きかけ（ロビー活動）を行う団体は？", answer: "圧力団体", reading: "あつりょくだんたい", detail: "利益団体とも呼ばれる。日本医師会や経済団体、労働組合など。" },
+            { id: 66, category: "政党と利益集団", question: "営利を目的とせず、社会貢献や国際協力などの活動を行う市民主体の非営利組織は？", answer: "NPO", reading: "えぬぴーおー", detail: "非営利組織（Non-Profit Organization）。" },
+            { id: 67, category: "政党と利益集団", question: "国境を越えて環境・人権・平和などの問題に取り組む民間・非政府組織は？", answer: "NGO", reading: "えぬじーおー", detail: "非政府組織（Non-Governmental Organization）。" },
+
+            // テーマ19: メディアと世論
+            { id: 68, category: "メディアと世論", question: "社会の大多数の人々に共通する意見や関心のことを何というか？", answer: "世論", reading: "せろん", detail: "よろんとも読む。民主政治を動かす大きな原動力。" },
+            { id: 69, category: "メディアと世論", question: "新聞・テレビ・ラジオ・インターネットなど、社会の不特定多数に大量の情報を伝達する媒体は？", answer: "マスメディア", reading: "ますまでニア", detail: "立法・行政・司法に次ぐ「第四の権力」と呼ばれる。" },
+            { id: 70, category: "メディアと世論", question: "マスメディアがニュースとして報道・取り上げることで、社会の関心事（アジェンダ）が形成される効果は？", answer: "アジェンダ設定機能", reading: "あじぇんだせっていきのう", detail: "議題設定機能。報道の選択が世論の注視点を左右する。" },
+            { id: 71, category: "メディアと世論", question: "SNSなどで、自分と同質の意見ばかりに接した結果、自分の考えが増幅され正解だと確信する現象は？", answer: "エコーチェンバー", reading: "えこーちぇんばー", detail: "閉じた空間で意見が反響（エコー）増幅される現像。" },
+            { id: 72, category: "メディアと世論", question: "アルゴリズムにより自分好みの情報だけに囲まれ、見たくない情報から隔離されてしまう状態は？", answer: "フィルターバブル", reading: "ふぃるたーばぶる", detail: "泡（バブル）の中に包まれたように偏った情報空間に孤立する。" },
+            { id: 73, category: "メディアと世論", question: "メディアが発信する情報を鵜呑みにせず、主体的に批判的に読み解き活用する能力は？", answer: "メディア・リテラシー", reading: "までにありてらしー", detail: "フェイクニュースに惑わされないための情報活用能力。" },
+
+            // STEP UP: 世界の政治体制
+            { id: 74, category: "世界の政治体制", question: "イギリスや日本のように、内閣が議会の信任に基づいて成立し、議会に対して連帯責任を負う政治体制は？", answer: "議院内閣制", reading: "ぎいんないかくせい", detail: "立法権と行政権が緊密に連携する体制。" },
+            { id: 75, category: "世界の政治体制", question: "イギリスの野党が政権交代に備えてあらかじめ組織しておく「影の内閣」のことを何というか？", answer: "シャドー・キャビネット", reading: "しゃどーきゃびねっと", detail: "与党の閣僚に対抗する担当者を配置し政権担当能力を示す。" },
+            { id: 76, category: "世界の政治体制", question: "アメリカのように、国民から選ばれた大統領が強力な行政権を持ち、三権分立が厳格に行われる体制は？", answer: "大統領制", reading: "だいとうりょうせい", detail: "大統領は解散権や法案提出権を持たないが、強力な拒否権を持つ。" },
+            { id: 77, category: "世界の政治体制", question: "発展途上国などで、経済成長を最優先するために国家権力を集約し民主化を制限する体制は？", answer: "開発独裁", reading: "かいはつどくさい", detail: "アジアや南米の新興国で過去に見られた体制。" },
+            { id: 78, category: "世界の政治体制", question: "中国のように、最高権力機関である全国人民代表大会（全人代）に権力が集中する政治制度は？", answer: "人民代表大会制度", reading: "じんみんだいひょうたいかいせいど", detail: "中国共産党による一党指導体制のもと運営される。" },
+            { id: 79, category: "世界の政治体制", question: "民主的な手続きを軽視し、一人の指導者や特定の少数グループが権力を独占・統制する政治体制は？", answer: "権威主義体制", reading: "けんいしゅぎたいせい", detail: "民主主義体制に対立する概念。" },
+            { id: 80, category: "世界の政治体制", question: "行政機関が政策立案などの際、一般市民から広く意見を公募し決定に反映させる手続きは？", answer: "パブリックコメント", reading: "ぱぶりっくこめんと", detail: "意見公募手続。行政の透明性と住民参加を高める。" }
         ];
 
         let currentMode = 'flashcard';
         let filteredData = [...CIVICS_DATA];
         let flashcardIndex = 0;
         let isCardFlipped = false;
-        let masteredIds = new Set(JSON.parse(localStorage.getItem('civics_mastered') || '[]'));
+        
+        let masteredIds = new Set(JSON.parse(localStorage.getItem('civics_mastered_v2') || '[]'));
+        let starredIds = new Set(JSON.parse(localStorage.getItem('civics_starred_v2') || '[]'));
 
         let inputIndex = 0;
         let inputScore = 0;
@@ -410,10 +477,15 @@
         window.onload = function() {
             populateCategories();
             initTheme();
+            updateCountBadge();
             switchMode('flashcard');
             updateFlashcard();
             renderMasterList();
         };
+
+        function updateCountBadge() {
+            document.getElementById('total-count-badge').textContent = `教科書完全準拠（全${CIVICS_DATA.length}問収録）`;
+        }
 
         function populateCategories() {
             const categories = [...new Set(CIVICS_DATA.map(item => item.category))];
@@ -459,6 +531,8 @@
             const cat = document.getElementById('flashcard-category').value;
             if (cat === 'all') {
                 filteredData = [...CIVICS_DATA];
+            } else if (cat === 'fav') {
+                filteredData = CIVICS_DATA.filter(item => starredIds.has(item.id));
             } else {
                 filteredData = CIVICS_DATA.filter(item => item.category === cat);
             }
@@ -478,6 +552,7 @@
         }
 
         function toggleCardFlip() {
+            if (filteredData.length === 0) return;
             isCardFlipped = !isCardFlipped;
             const inner = document.getElementById('flashcard-inner');
             if (isCardFlipped) {
@@ -488,7 +563,17 @@
         }
 
         function updateFlashcard() {
-            if (filteredData.length === 0) return;
+            const total = filteredData.length;
+            if (total === 0) {
+                document.getElementById('card-category-tag').textContent = "なし";
+                document.getElementById('card-question').textContent = "条件に該当するカードがありません";
+                document.getElementById('card-answer').textContent = "-";
+                document.getElementById('card-detail').textContent = "お気に入り登録やカテゴリ選択を変更してください。";
+                document.getElementById('flashcard-progress-text').textContent = `カード 0 / 0`;
+                return;
+            }
+
+            if (flashcardIndex >= total) flashcardIndex = 0;
             const item = filteredData[flashcardIndex];
             isCardFlipped = false;
             document.getElementById('flashcard-inner').classList.remove('rotate-y-180');
@@ -499,7 +584,8 @@
                 document.getElementById('card-answer').textContent = item.answer;
                 document.getElementById('card-detail').textContent = item.detail;
 
-                const total = filteredData.length;
+                updateStarIconUI(item.id);
+
                 document.getElementById('flashcard-progress-text').textContent = `カード ${flashcardIndex + 1} / ${total}`;
                 document.getElementById('flashcard-status-count').textContent = `覚えた: ${masteredIds.size} / ${CIVICS_DATA.length}`;
 
@@ -511,7 +597,36 @@
             }, 150);
         }
 
+        function updateStarIconUI(id) {
+            const isStarred = starredIds.has(id);
+            const frontIcon = document.getElementById('card-star-icon-front');
+            const backIcon = document.getElementById('card-star-icon-back');
+            if (isStarred) {
+                frontIcon.className = 'fa-solid fa-star text-lg text-amber-400';
+                backIcon.className = 'fa-solid fa-star text-lg text-amber-400';
+            } else {
+                frontIcon.className = 'fa-solid fa-star text-lg text-slate-300 hover:text-amber-400';
+                backIcon.className = 'fa-solid fa-star text-lg text-slate-300 hover:text-amber-400';
+            }
+        }
+
+        function toggleStarCurrent() {
+            if (filteredData.length === 0) return;
+            const item = filteredData[flashcardIndex];
+            if (starredIds.has(item.id)) {
+                starredIds.delete(item.id);
+            } else {
+                starredIds.add(item.id);
+            }
+            localStorage.setItem('civics_starred_v2', JSON.stringify([...starredIds]));
+            updateStarIconUI(item.id);
+            if (document.getElementById('flashcard-category').value === 'fav') {
+                filterFlashcards();
+            }
+        }
+
         function nextFlashcard() {
+            if (filteredData.length === 0) return;
             if (flashcardIndex < filteredData.length - 1) {
                 flashcardIndex++;
             } else {
@@ -521,6 +636,7 @@
         }
 
         function prevFlashcard() {
+            if (filteredData.length === 0) return;
             if (flashcardIndex > 0) {
                 flashcardIndex--;
             } else {
@@ -530,26 +646,27 @@
         }
 
         function markFlashcard(isMastered) {
+            if (filteredData.length === 0) return;
             const currentItem = filteredData[flashcardIndex];
             if (isMastered) {
                 masteredIds.add(currentItem.id);
             } else {
                 masteredIds.delete(currentItem.id);
             }
-            localStorage.setItem('civics_mastered', JSON.stringify([...masteredIds]));
+            localStorage.setItem('civics_mastered_v2', JSON.stringify([...masteredIds]));
             nextFlashcard();
         }
 
         function resetFlashcardProgress() {
-            if (confirm('習熟度記録を初期化しますか？')) {
+            if (confirm('すべての学習進捗（習熟度）を初期化しますか？')) {
                 masteredIds.clear();
-                localStorage.removeItem('civics_mastered');
+                localStorage.removeItem('civics_mastered_v2');
                 updateFlashcard();
             }
         }
 
         function speakCurrentCard() {
-            if (!('speechSynthesis' in window)) return;
+            if (!('speechSynthesis' in window) || filteredData.length === 0) return;
             const item = filteredData[flashcardIndex];
             const text = `${item.answer}。${item.detail}`;
             const utterance = new SpeechSynthesisUtterance(text);
@@ -557,6 +674,7 @@
             synth.speak(utterance);
         }
 
+        // Mode 2: Input Mode
         function resetInputMode() {
             inputIndex = 0;
             inputScore = 0;
@@ -578,13 +696,18 @@
             document.getElementById('input-question-text').textContent = currentInputItem.question;
         }
 
+        function normalizeText(str) {
+            return str ? str.toLowerCase().replace(/[\s\・\（\）\(\)\-\_]/g, '') : '';
+        }
+
         function submitInputAnswer(e) {
             e.preventDefault();
-            const userInput = document.getElementById('user-text-input').value.trim().toLowerCase();
+            const userInput = normalizeText(document.getElementById('user-text-input').value);
             if (!userInput) return;
 
-            const targetAnswer = currentInputItem.answer.toLowerCase();
-            const targetReading = currentInputItem.reading || '';
+            const targetAnswer = normalizeText(currentInputItem.answer);
+            const targetReading = normalizeText(currentInputItem.reading);
+            
             const isCorrect = userInput === targetAnswer || 
                               userInput === targetReading || 
                               (userInput.length >= 2 && targetAnswer.includes(userInput));
@@ -604,12 +727,12 @@
                 feedbackEl.className = "p-4 rounded-xl border bg-emerald-50 border-emerald-300 dark:bg-emerald-950/50 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 space-y-1";
                 badgeEl.className = "px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-500 text-white";
                 badgeEl.textContent = "正解！";
-                titleEl.textContent = "素晴らしい！正解です。";
+                titleEl.textContent = "素晴らしい！正しく暗記できています。";
             } else {
                 feedbackEl.className = "p-4 rounded-xl border bg-rose-50 border-rose-300 dark:bg-rose-950/50 dark:border-rose-800 text-rose-900 dark:text-rose-200 space-y-1";
                 badgeEl.className = "px-2.5 py-0.5 rounded-full text-xs font-black bg-rose-500 text-white";
                 badgeEl.textContent = "不正解";
-                titleEl.textContent = "惜しい！模範解答を確認しましょう。";
+                titleEl.textContent = "惜しい！教科書の重要用語を確認しましょう。";
             }
 
             ansEl.textContent = `正解: ${currentInputItem.answer} (${currentInputItem.reading})`;
@@ -625,6 +748,7 @@
             displayInputQuestion();
         }
 
+        // Mode 3: 8-Choice Quiz Mode
         function resetQuiz8Mode() {
             quiz8Index = 0;
             quiz8Score = 0;
@@ -649,10 +773,10 @@
             document.getElementById('quiz8-next-btn').classList.add('hidden');
 
             if (quiz8Index >= quiz8Items.length) {
-                document.getElementById('quiz8-question').textContent = `テスト終了！ スコア: ${quiz8Score} / ${quiz8Items.length} 問正解`;
+                document.getElementById('quiz8-question').textContent = `テスト終了！ あなたのスコア: ${quiz8Score} / ${quiz8Items.length} 問正解`;
                 document.getElementById('quiz8-options').innerHTML = `
                     <button onclick="resetQuiz8Mode()" class="col-span-full py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg transition text-base">
-                        もう一度テストを受ける
+                        もう一度8択テストを受ける
                     </button>
                 `;
                 return;
@@ -728,6 +852,7 @@
             displayQuiz8Question();
         }
 
+        // Mode 4: Master List Mode
         function renderMasterList() {
             filterMasterList();
         }
@@ -737,7 +862,7 @@
             const cat = document.getElementById('list-category-select').value;
 
             const filtered = CIVICS_DATA.filter(item => {
-                const matchesCat = (cat === 'all' || item.category === cat);
+                const matchesCat = (cat === 'all' || (cat === 'fav' ? starredIds.has(item.id) : item.category === cat));
                 const matchesSearch = item.question.toLowerCase().includes(query) ||
                                       item.answer.toLowerCase().includes(query) ||
                                       item.detail.toLowerCase().includes(query) ||
@@ -751,6 +876,7 @@
             container.innerHTML = '';
 
             filtered.forEach(item => {
+                const isStarred = starredIds.has(item.id);
                 const card = document.createElement('div');
                 card.className = "bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2 hover:border-blue-300 dark:hover:border-blue-700 transition";
                 card.innerHTML = `
@@ -758,9 +884,14 @@
                         <span class="px-2 py-0.5 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-300 rounded text-xs font-bold shrink-0">
                             ${item.category}
                         </span>
-                        <button onclick="speakText('${item.answer}。${item.detail}')" class="text-slate-400 hover:text-blue-600 p-1 transition" title="読み上げ">
-                            <i class="fa-solid fa-volume-high text-xs"></i>
-                        </button>
+                        <div class="flex items-center space-x-3">
+                            <button onclick="toggleStarList(${item.id})" class="text-slate-300 hover:text-amber-400 transition" title="お気に入り切替">
+                                <i class="fa-solid fa-star text-sm ${isStarred ? 'text-amber-400' : 'text-slate-300'}"></i>
+                            </button>
+                            <button onclick="speakText('${item.answer}。${item.detail}')" class="text-slate-400 hover:text-blue-600 p-1 transition" title="音声読み上げ">
+                                <i class="fa-solid fa-volume-high text-xs"></i>
+                            </button>
+                        </div>
                     </div>
                     <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 leading-snug">
                         Q. ${item.question}
@@ -776,6 +907,16 @@
                 `;
                 container.appendChild(card);
             });
+        }
+
+        function toggleStarList(id) {
+            if (starredIds.has(id)) {
+                starredIds.delete(id);
+            } else {
+                starredIds.add(id);
+            }
+            localStorage.setItem('civics_starred_v2', JSON.stringify([...starredIds]));
+            filterMasterList();
         }
 
         function speakText(text) {
@@ -806,7 +947,3 @@
     </script>
 </body>
 </html>
-```
-^^^eof
-
-上のマニュアルの手順に従って、エディタ内にあるコードを **`index.html`** という名前でGitHubのリポジトリにアップロードしていただければ、誰でもURL経由でアクセスしてすぐに暗記アプリを利用できるようになります！
