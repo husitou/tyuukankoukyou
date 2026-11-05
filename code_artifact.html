@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="ja" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中学・高校 公民・政治分野 重要暗記マスター</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans JP', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.2);
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body class="h-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200 font-sans flex flex-col">
+
+    <!-- Header / Navbar -->
+    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- App Title -->
+                <div class="flex items-center space-x-3">
+                    <div class="p-2 bg-blue-600 text-white rounded-lg shadow-md">
+                        <i class="fa-solid fa-landmark text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold leading-tight">政治・公民 暗記マスター</h1>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">教科書完全完全準拠（全45問収録）</p>
+                    </div>
+                </div>
+
+                <!-- Dark Mode & Progress Summary -->
+                <div class="flex items-center space-x-3">
+                    <button id="themeToggleBtn" class="p-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                        <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mode Navigation Bar -->
+        <div class="bg-slate-100 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-700 px-2 sm:px-4">
+            <div class="max-w-7xl mx-auto flex space-x-1 sm:space-x-2 overflow-x-auto py-2 no-scrollbar">
+                <button onclick="switchMode('flashcard')" id="nav-flashcard" class="nav-tab px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm whitespace-nowrap flex items-center space-x-1.5 transition">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span>暗記カード</span>
+                </button>
+                <button onclick="switchMode('input')" id="nav-input" class="nav-tab px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm whitespace-nowrap flex items-center space-x-1.5 transition">
+                    <i class="fa-solid fa-keyboard"></i>
+                    <span>文字入力</span>
+                </button>
+                <button onclick="switchMode('quiz8')" id="nav-quiz8" class="nav-tab px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm whitespace-nowrap flex items-center space-x-1.5 transition">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>8択テスト</span>
+                </button>
+                <button onclick="switchMode('list')" id="nav-list" class="nav-tab px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm whitespace-nowrap flex items-center space-x-1.5 transition">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>全問確認一覧</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-between">
+
+        <!-- ================= MODE 1: FLASHCARD ================= -->
+        <section id="mode-flashcard" class="mode-section space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div class="flex items-center space-x-2 w-full sm:w-auto">
+                    <label class="text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0">分野:</label>
+                    <select id="flashcard-category" onchange="filterFlashcards()" class="w-full sm:w-auto bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-xs sm:text-sm rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
+                        <option value="all">全分野 (すべて)</option>
+                    </select>
+                </div>
+                <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
+                    <button onclick="shuffleFlashcards()" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 rounded-lg text-xs sm:text-sm font-medium transition flex items-center space-x-1">
+                        <i class="fa-solid fa-shuffle"></i>
+                        <span>シャッフル</span>
+                    </button>
+                    <button onclick="resetFlashcardProgress()" class="px-3 py-1.5 text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition">
+                        判定リセット
+                    </button>
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <div class="flex justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
+                    <span id="flashcard-progress-text">カード 1 / 45</span>
+                    <span id="flashcard-status-count">覚えた: 0 / 45</span>
+                </div>
+                <div class="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden flex">
+                    <div id="flashcard-progress-bar" class="bg-blue-600 h-full transition-all duration-300" style="width: 0%"></div>
+                    <div id="flashcard-mastered-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="perspective-1000 w-full min-h-[280px] sm:min-h-[340px] cursor-pointer group" onclick="toggleCardFlip()">
+                <div id="flashcard-inner" class="relative w-full h-full min-h-[280px] sm:min-h-[340px] rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 transition-transform duration-500 transform-style-3d">
+                    <div class="absolute inset-0 w-full h-full p-6 sm:p-8 flex flex-col justify-between backface-hidden rounded-2xl bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800/90">
+                        <div class="flex justify-between items-center">
+                            <span id="card-category-tag" class="px-2.5 py-1 bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 rounded-full text-xs font-bold">
+                                カテゴリ
+                            </span>
+                            <span class="text-xs text-slate-400 flex items-center gap-1">
+                                <i class="fa-solid fa-rotate"></i> クリックでめくる
+                            </span>
+                        </div>
+                        <div class="my-auto py-4 text-center">
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">QUESTION</p>
+                            <h3 id="card-question" class="text-lg sm:text-2xl font-bold leading-relaxed text-slate-800 dark:text-slate-100">
+                                質問が表示されます
+                            </h3>
+                        </div>
+                        <div class="text-center text-xs text-slate-400">
+                            ヒント: タップすると解答を表示します
+                        </div>
+                    </div>
+
+                    <div class="absolute inset-0 w-full h-full p-6 sm:p-8 flex flex-col justify-between backface-hidden rotate-y-180 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-indigo-950/40">
+                        <div class="flex justify-between items-center">
+                            <span class="px-2.5 py-1 bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 rounded-full text-xs font-bold">
+                                解答・解説
+                            </span>
+                            <button onclick="event.stopPropagation(); speakCurrentCard();" class="text-slate-500 hover:text-blue-600 p-2 rounded-full hover:bg-white/50 transition" title="読み上げ">
+                                <i class="fa-solid fa-volume-high text-lg"></i>
+                            </button>
+                        </div>
+                        <div class="my-auto py-2 text-center">
+                            <p class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1">ANSWER</p>
+                            <h2 id="card-answer" class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-3">
+                                解答
+                            </h2>
+                            <p id="card-detail" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed bg-white/60 dark:bg-slate-900/50 p-3 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+                                詳細解説...
+                            </p>
+                        </div>
+                        <div class="text-center text-xs text-slate-400">
+                            カード下のボタンで習熟度を判定してください
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                    <button onclick="markFlashcard(false)" class="py-3 px-4 bg-rose-100 hover:bg-rose-200 text-rose-800 dark:bg-rose-950/60 dark:hover:bg-rose-900 dark:text-rose-200 font-bold rounded-xl shadow-sm transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                        <span>まだ (復習する)</span>
+                    </button>
+                    <button onclick="markFlashcard(true)" class="py-3 px-4 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 dark:bg-emerald-950/60 dark:hover:bg-emerald-900 dark:text-emerald-200 font-bold rounded-xl shadow-sm transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-check text-lg"></i>
+                        <span>覚えた！</span>
+                    </button>
+                </div>
+                <div class="flex justify-between items-center pt-2">
+                    <button onclick="prevFlashcard()" class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-xs sm:text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center space-x-1">
+                        <i class="fa-solid fa-chevron-left"></i>
+                        <span>前の問題</span>
+                    </button>
+                    <button onclick="nextFlashcard()" class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-xs sm:text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center space-x-1">
+                        <span>次の問題</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MODE 2: TEXT INPUT ================= -->
+        <section id="mode-input" class="mode-section space-y-6 hidden">
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex justify-between items-center">
+                <div>
+                    <span class="text-xs text-slate-500 dark:text-slate-400">文字入力テスト</span>
+                    <h3 id="input-category-display" class="font-bold text-sm text-blue-600 dark:text-blue-400">全分野</h3>
+                </div>
+                <div class="text-right">
+                    <span id="input-progress-text" class="text-xs font-bold text-slate-500">問 1 / 45</span>
+                    <div id="input-score-text" class="text-sm font-bold text-emerald-600">正解数: 0</div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-md space-y-4">
+                <span class="px-2.5 py-1 bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 rounded-full text-xs font-bold">
+                    一問一答 入力形式
+                </span>
+                <h2 id="input-question-text" class="text-lg sm:text-xl font-bold leading-relaxed text-slate-800 dark:text-slate-100 min-h-[60px]">
+                    問題文がここに入ります。
+                </h2>
+
+                <form id="input-form" onsubmit="submitInputAnswer(event)" class="space-y-4 pt-2">
+                    <div>
+                        <label for="user-text-input" class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">あなたの解答 (ひらがな・部分一致対応):</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="user-text-input" autocomplete="off" placeholder="ここに用語・単語を入力..." class="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <button type="submit" id="input-submit-btn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition shrink-0">
+                                回答する
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div id="input-feedback" class="hidden p-4 rounded-xl border space-y-2 transition">
+                    <div class="flex items-center space-x-2">
+                        <span id="input-feedback-badge" class="px-2.5 py-0.5 rounded-full text-xs font-black"></span>
+                        <span id="input-feedback-title" class="font-bold text-sm"></span>
+                    </div>
+                    <p id="input-feedback-correct-answer" class="text-sm font-bold"></p>
+                    <p id="input-feedback-detail" class="text-xs text-slate-600 dark:text-slate-300"></p>
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button id="input-next-btn" onclick="nextInputQuestion()" class="hidden px-6 py-2.5 bg-slate-800 hover:bg-slate-900 text-white dark:bg-slate-200 dark:hover:bg-white dark:text-slate-900 font-bold rounded-xl transition flex items-center space-x-2">
+                    <span>次の問題へ</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= MODE 3: 8-OPTION QUIZ ================= -->
+        <section id="mode-quiz8" class="mode-section space-y-6 hidden">
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-wrap justify-between items-center gap-3">
+                <div class="flex items-center space-x-3">
+                    <span class="px-2.5 py-1 bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 rounded-full text-xs font-bold">
+                        8択極限トレーニング
+                    </span>
+                    <span id="quiz8-counter" class="text-xs font-bold text-slate-500">第 1 / 10 問</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div id="timer-display-container" class="flex items-center space-x-1.5 text-rose-600 dark:text-rose-400 font-mono font-bold text-sm">
+                        <i class="fa-solid fa-clock"></i>
+                        <span id="timer-text">15s</span>
+                    </div>
+                    <label class="flex items-center cursor-pointer text-xs font-medium text-slate-500">
+                        <input type="checkbox" id="timer-toggle" checked onchange="toggleTimerSetting()" class="sr-only peer">
+                        <div class="w-8 h-4 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-slate-600 peer-checked:bg-blue-600 relative"></div>
+                        <span class="ml-1.5">タイマー</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-md space-y-4">
+                <h2 id="quiz8-question" class="text-base sm:text-lg font-bold leading-relaxed text-slate-800 dark:text-slate-100">
+                    問題文が表示されます
+                </h2>
+                <div id="quiz8-options" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2"></div>
+                <div id="quiz8-explanation" class="hidden p-4 rounded-xl bg-slate-100 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span id="quiz8-result-status" class="font-bold text-sm"></span>
+                        <span id="quiz8-correct-term" class="text-xs font-bold text-blue-600 dark:text-blue-400"></span>
+                    </div>
+                    <p id="quiz8-explanation-text" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button id="quiz8-next-btn" onclick="nextQuiz8Question()" class="hidden px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-md transition flex items-center space-x-2">
+                    <span>次の問題へ</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= MODE 4: MASTER LIST VIEW ================= -->
+        <section id="mode-list" class="mode-section space-y-4 hidden">
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="relative md:col-span-2">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                        <input type="text" id="list-search-input" oninput="filterMasterList()" placeholder="キーワードで問題・用語・解説を検索..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <select id="list-category-select" onchange="filterMasterList()" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl px-3 py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500">
+                            <option value="all">全単元を表示</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center text-xs text-slate-500 pt-1">
+                    <span id="list-count-info">全 45 件中 45 件表示</span>
+                    <span class="italic"><i class="fa-solid fa-volume-high"></i> アイコンで音声読み上げ</span>
+                </div>
+            </div>
+
+            <div id="master-list-container" class="space-y-3"></div>
+        </section>
+    </main>
+
+    <!-- App JavaScript & Data -->
+    <script>
+        const CIVICS_DATA = [
+            { id: 1, category: "国会のしくみと役割", question: "日本国憲法において「国権の最高機関」であり、「国の唯一の立法機関」と定められている機関は？", answer: "国会", reading: "こっかい", detail: "憲法第41条。主権者である国民の代表によって構成されるため最高機関とされる。" },
+            { id: 2, category: "国会のしくみと役割", question: "日本の国会のように、衆議院と参議院の2つの議院から構成される仕組みを何というか？", answer: "二院制", reading: "にいんせい", detail: "慎重な審議を行い、一方の議院の行き過ぎを抑える（抑止）役割を持つ。" },
+            { id: 3, category: "国会のしくみと役割", question: "毎年1回、1月に召集され、会期が150日間（予算審議など）定められている国会は？", answer: "常会", reading: "じょうかい", detail: "通常国会とも呼ばれ、翌年度の全予算審議や主要法律案の審議を行う。" },
+            { id: 4, category: "国会のしくみと役割", question: "内閣が必要と認めたとき、またはどちらかの議院の総議員の4分の1以上の要求で召集される国会は？", answer: "臨時会", reading: "りんじかい", detail: "臨時国会。補正予算や緊急の事件・法案審議のために開かれる。" },
+            { id: 5, category: "国会のしくみと役割", question: "衆議院解散後の総選挙の日から30日以内に召集され、内閣総理大臣の指名を行う国会は？", answer: "特別会", reading: "とくべつかい", detail: "特別国会。衆議院解散後に行われる。" },
+            { id: 6, category: "国会のしくみと役割", question: "衆議院の解散中、国に緊急の必要があるときに内閣の求めによって開かれる参議院の会合は？", answer: "緊急集会", reading: "きんきゅうしゅうかい", detail: "参議院のみで開催され、取られた措置は次の国会で衆議院の同意が必要。" },
+            { id: 7, category: "国会のしくみと役割", question: "法律案や予算などで両院の議決が一致しない場合、一致を図るために設置される機関は？", answer: "両院協議会", reading: "りょういんきょうぎかい", detail: "各議院から10名ずつ選出。予算・条約指名で成案が得られない場合は衆議院の議決が優先される。" },
+            { id: 8, category: "国会のしくみと役割", question: "任期が短く解散がある衆議院の議決を参議院より優先させる原則を何というか？", answer: "衆議院の優越", reading: "しゅうぎいんのおうえつ", detail: "国民の意思（世論）をより迅速・正確に反映させるため憲法で認められている。" },
+            { id: 9, category: "国会のしくみと役割", question: "衆議院で可決し参議院で否決された法律案は、衆議院で出席議員のどれだけの多数で再可決すれば成立するか？", answer: "3分の2以上", reading: "さんぶんのにいじょう", detail: "衆議院の再可決規定（憲法第59条）。" },
+            { id: 10, category: "国会のしくみと役割", question: "不正を行ったり重大な非行のあった裁判官を辞めさせるかどうかを判断するために国会に設置される裁判所は？", answer: "弾劾裁判所", reading: "だんがいさいばんしょ", detail: "衆参両院の議員各7名（計14名）の裁判員で構成される。" },
+            { id: 11, category: "国会のしくみと役割", question: "衆議院のみに認められている、内閣に対して政治的責任を追及し辞職を求める決議は？", answer: "内閣不信任の決議", reading: "ないかくふしんんにんのけつぎ", detail: "可決された場合、内閣は10日以内に衆議院を解散するか総辞職しなければならない。" },
+            { id: 12, category: "国会のしくみと役割", question: "憲法改正の発議を行うために必要な、各議院の賛成割合は？", answer: "総議員の3分の2以上", reading: "そうぎいんのさんぶんのにいじょう", detail: "発議後、国民投票において過半数の賛成を得ることで改正が成立する。" },
+            { id: 13, category: "内閣のしくみと役割", question: "内閣総理大臣とその他の国務大臣で構成され、行政権を担当する最高機関は？", answer: "内閣", reading: "ないかく", detail: "憲法第65条「行政権は、内閣に属する」。" },
+            { id: 14, category: "内閣のしくみと役割", question: "内閣総理大臣およびその他の国務大臣は、憲法上どのような人物（資格）でなければならないか？", answer: "文民", reading: "ぶんみん", detail: "文民統制（シビリアン・コントロール）。現役の軍人・自衛官でないこと。" },
+            { id: 15, category: "内閣のしくみと役割", question: "内閣がその首長（内閣総理大臣）のもとで方針を決定し、全閣僚が一致して責任を負う原則を何というか？", answer: "閣内一致の原則", reading: "かくないいっちのげんそく", detail: "閣議は全員一致が原則であり、合議制として国会に対し連帯責任を負う。" },
+            { id: 16, category: "内閣のしくみと役割", question: "中央省庁の幹部人事などを一元管理し、内閣主導の政治（政治主導）を強めるために2014年に設置された機関は？", answer: "内閣人事局", reading: "ないかくじんじきょく", detail: "幹部官僚の人事を首相官邸が掌握することで官僚機構の統制を図る。" },
+            { id: 17, category: "内閣のしくみと役割", question: "行政機関の違法・不当な行為による住民の苦情を受け付け、中立な立場から調査・是正勧告を行う制度（官民苦情処理員）は？", answer: "オンブズマン制度", reading: "おんぶずまんせいど", detail: "行政監察官制度。地方自治体などで導入が進んでいる。" },
+            { id: 18, category: "内閣のしくみと役割", question: "公務員が特定の政党や天下り企業ではなく、国民全体のために働くという憲法上の位置付けは？", answer: "全体の奉仕者", reading: "ぜんたいのほうしゃ", detail: "憲法第15条「すべて公務員は、全体の奉仕者であつて、一部の奉仕者ではない」。" },
+            { id: 19, category: "地方自治のしくみ", question: "地方自治は民主主義の基礎であり訓練の場であることから、イギリスの政治学者ブライスが遺した有名な言葉は？", answer: "地方自治は民主主義の学校", reading: "ちほうじちはみんしゅしゅぎのがっこう", detail: "住民参加による自己決定が民主主義の根幹であることを表す。" },
+            { id: 20, category: "地方自治のしくみ", question: "地方公共団体（自治体）が、国の法律の範囲内で独自に制定する独自の決まりは？", answer: "条例", reading: "じょうれい", detail: "地方議会が議決により制定する。" },
+            { id: 21, category: "地方自治のしくみ", question: "住民が自らの意思で直接、首長の解職や条例の制定などを求める権利を何というか？", answer: "直接請求権", reading: "ちょくせつせいきゅうけん", detail: "地方自治法に基づき、有権者の一定割合以上の署名が必要。" },
+            { id: 22, category: "地方自治のしくみ", question: "条例の制定や改廃を直接請求する場合、有権者のどれだけの署名が必要か？", answer: "50分の1以上", reading: "ごじゅうぶんのいいじょう", detail: "請求先は地方公共団体の首長（知事・市町村長）。" },
+            { id: 23, category: "地方自治のしくみ", question: "首長や議員の解職（リコール）を直接請求する場合、有権者のどれだけの署名が必要か？", answer: "3分の1以上", reading: "さんぶんのいいじょう", detail: "請求先は選挙管理委員会。解職投票で過半数の同意があれば失職する。" },
+            { id: 24, category: "地方自治のしくみ", question: "国が指定する特定の地方公共団体だけに適用される特別な法律を制定する際に行われる住民投票は？", answer: "地方自治特別法の住民投票", reading: "ちほうじちとくべつほうのじゅうみんとうひょう", detail: "憲法第95条。住民投票で過半数の同意を得なければ制定できない。" },
+            { id: 25, category: "地方自治のしくみ", question: "地方自治体間の財力格差をなくすため、国から用途を定めずに交付される資金は？", answer: "地方交付税交付金", reading: "ちほうこうふぜいこうふきん", detail: "地方自治体の独自の財源（一般財源）として自由に使用できる。" },
+            { id: 26, category: "民主政治と政治参加", question: "選出された代表者が議会で話し合い、政策を決定する政治の仕組みは？", answer: "間接民主制", reading: "かんせつみんしゅせい", detail: "代議制ともいう。国民投票などの直接民主制と併用される。" },
+            { id: 27, category: "民主政治と政治参加", question: "憲法改正や重要政策について、国民が直接賛否を投票して決定する制度は？", answer: "国民投票", reading: "こくみんとうひょう", detail: "レファレンダム。憲法改正手続法などに基づく。" },
+            { id: 28, category: "民主政治と政治参加", question: "1つの選挙区から1人の議員を選出する選挙制度は？", answer: "小選挙区制", reading: "しょうせんきょくせい", detail: "大政党に有利で政局が安定しやすいが、死票が多くなるデメリットがある。" },
+            { id: 29, category: "民主政治と政治参加", question: "各政党の得票率に応じて議席を配分する選挙制度は？", answer: "比例代表制", reading: "ひれいだいひょうせい", detail: "死票が少なく小政党も議席を得やすいが、小会派が乱立する可能性がある。" },
+            { id: 30, category: "民主政治と政治参加", question: "日本の衆議院議員選挙で採用されている、小選挙区制と比例代表制を組み合わせた制度は？", answer: "小選挙区比例代表並立制", reading: "しょうせんきょくひれいだいひょうへいりつせい", detail: "重複立候補（両方に立候補すること）が認められている。" },
+            { id: 31, category: "民主政治と政治参加", question: "落選者の票など、議席に結びつかなかった無効と同等な投票票のことを何というか？", answer: "死票", reading: "しひょう", detail: "小選挙区制では死票の割合が高くなりやすい。" },
+            { id: 32, category: "民主政治と政治参加", question: "選挙区ごとの人口の偏りにより、1票が議員選出に与える影響力に不平等が生じる問題を何というか？", answer: "1票の格差", reading: "いっぴょうのかくさ", detail: "最高裁判所で「違憲状態」判決が出されるなど長年の政治的課題。" },
+            { id: 33, category: "民主政治と政治参加", question: "同じ理念や政策を持つ人々が政権を獲得し政策を実現するために結成する組織は？", answer: "政党", reading: "せいとう", detail: "政党中心の政治を政党政治という。" },
+            { id: 34, category: "民主政治と政治参加", question: "政党の健全な活動を支援するため、国庫から政党に交付される資金（国民1人当たり250円相当）は？", answer: "政党交付金", reading: "せいとうこうふきん", detail: "政党助成法に基づき支給される。" },
+            { id: 35, category: "民主政治と政治参加", question: "政党が選挙の際に掲げる、公約や具体的な政権公約・数値目標を示した施策集は？", answer: "マニフェスト", reading: "まにふぇすと", detail: "政権公約。実現の期限や数値目標、財源を明記する。" },
+            { id: 36, category: "メディアと世論", question: "新聞・テレビ・インターネットなど、社会の大多数に情報を伝達する媒体を何というか？", answer: "マスメディア", reading: "ますまでにあ", detail: "立法・行政・司法に次ぐ「第四の権力」と呼ばれることもある。" },
+            { id: 37, category: "メディアと世論", question: "マスメディアが特定のニュースやテーマを重点的に報じることで、人々の関心事やアジェンダが決まる現象は？", answer: "アジェンダセッティング", reading: "あじぇんだせっていんぐ", detail: "議題設定機能。メディアの報道姿勢が世論形成に強い影響を与える。" },
+            { id: 38, category: "メディアと世論", question: "SNSなどで自分と同質の意見ばかりに接した結果、自分の考えが正解だと過剰に信じ込んでしまう現象は？", answer: "エコーチェンバー", reading: "えこーちぇんばー", detail: "閉ざされた空間で意見が反響（エコー）増幅される現象。" },
+            { id: 39, category: "メディアと世論", question: "アルゴリズムにより自分好みの情報だけが表示され、見たくない情報から隔離されてしまう状態は？", answer: "フィルターバブル", reading: "ふぃるたーばぶる", detail: "泡（バブル）の中に包まれたように偏った情報空間に孤立する。" },
+            { id: 40, category: "メディアと世論", question: "インターネット等の情報を鵜呑みにせず、主体的に真偽を見極め批判的に読み解く能力は？", answer: "メディア・リテラシー", reading: "までにありてらしー", detail: "フェイクニュースに惑わされないための情報活用能力。" },
+            { id: 41, category: "世界の政治体制", question: "イギリスや日本のように、内閣が議会の信任に基づいて成立し、議会に対して責任を負う体制は？", answer: "議院内閣制", reading: "ぎいんないかくせい", detail: "議会と内閣が密接に連携する政治体制。" },
+            { id: 42, category: "世界の政治体制", question: "アメリカのように、国民から選ばれた大統領が強力な行政権を持ち、厳格に三権分立が行われる体制は？", answer: "大統領制", reading: "だいとうりょうせい", detail: "大統領は法案提出権や解散権を持たず、法案拒否権を持つ。" },
+            { id: 43, category: "世界の政治体制", question: "イギリスの野党が政権交代に備えて組織する「影の内閣」のことを英語で何というか？", answer: "シャドー・キャビネット", reading: "しゃどーきゃびねっと", detail: "与党の閣僚に対抗する担当者をあらかじめ配置しておく仕組み。" },
+            { id: 44, category: "世界の政治体制", question: "中国のように、全国人民代表大会（全人代）に最高権力が集中する政治体制は？", answer: "人民代表大会制度", reading: "じんみんだいひょうたいかいせいど", detail: "中国共産党による一党支配（事実上の指導体制）のもと運営される。" },
+            { id: 45, category: "世界の政治体制", question: "国民が行政の決定の参考にできるよう、公共事業などの案について一般から意見を公募する手続きは？", answer: "パブリックコメント", reading: "ぱぶりっくこめんと", detail: "意見公募手続。行政の透明性と住民意思の反映を図る。" }
+        ];
+
+        let currentMode = 'flashcard';
+        let filteredData = [...CIVICS_DATA];
+        let flashcardIndex = 0;
+        let isCardFlipped = false;
+        let masteredIds = new Set(JSON.parse(localStorage.getItem('civics_mastered') || '[]'));
+
+        let inputIndex = 0;
+        let inputScore = 0;
+        let currentInputItem = null;
+
+        let quiz8Index = 0;
+        let quiz8Score = 0;
+        let quiz8Items = [];
+        let timerInterval = null;
+        let timeLeft = 15;
+        let timerEnabled = true;
+
+        const synth = window.speechSynthesis;
+
+        window.onload = function() {
+            populateCategories();
+            initTheme();
+            switchMode('flashcard');
+            updateFlashcard();
+            renderMasterList();
+        };
+
+        function populateCategories() {
+            const categories = [...new Set(CIVICS_DATA.map(item => item.category))];
+            const fcSelect = document.getElementById('flashcard-category');
+            const listSelect = document.getElementById('list-category-select');
+
+            categories.forEach(cat => {
+                const opt1 = document.createElement('option');
+                opt1.value = cat;
+                opt1.textContent = cat;
+                fcSelect.appendChild(opt1);
+
+                const opt2 = document.createElement('option');
+                opt2.value = cat;
+                opt2.textContent = cat;
+                listSelect.appendChild(opt2);
+            });
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-section').forEach(sec => sec.classList.add('hidden'));
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
+                btn.classList.add('text-slate-600', 'dark:text-slate-300', 'hover:bg-slate-200', 'dark:hover:bg-slate-700');
+            });
+
+            document.getElementById(`mode-${mode}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${mode}`);
+            activeNav.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+            activeNav.classList.remove('text-slate-600', 'dark:text-slate-300', 'hover:bg-slate-200', 'dark:hover:bg-slate-700');
+
+            if (mode === 'input') {
+                resetInputMode();
+            } else if (mode === 'quiz8') {
+                resetQuiz8Mode();
+            } else if (mode === 'list') {
+                filterMasterList();
+            }
+        }
+
+        function filterFlashcards() {
+            const cat = document.getElementById('flashcard-category').value;
+            if (cat === 'all') {
+                filteredData = [...CIVICS_DATA];
+            } else {
+                filteredData = CIVICS_DATA.filter(item => item.category === cat);
+            }
+            flashcardIndex = 0;
+            isCardFlipped = false;
+            updateFlashcard();
+        }
+
+        function shuffleFlashcards() {
+            for (let i = filteredData.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [filteredData[i], filteredData[j]] = [filteredData[j], filteredData[i]];
+            }
+            flashcardIndex = 0;
+            isCardFlipped = false;
+            updateFlashcard();
+        }
+
+        function toggleCardFlip() {
+            isCardFlipped = !isCardFlipped;
+            const inner = document.getElementById('flashcard-inner');
+            if (isCardFlipped) {
+                inner.classList.add('rotate-y-180');
+            } else {
+                inner.classList.remove('rotate-y-180');
+            }
+        }
+
+        function updateFlashcard() {
+            if (filteredData.length === 0) return;
+            const item = filteredData[flashcardIndex];
+            isCardFlipped = false;
+            document.getElementById('flashcard-inner').classList.remove('rotate-y-180');
+
+            setTimeout(() => {
+                document.getElementById('card-category-tag').textContent = item.category;
+                document.getElementById('card-question').textContent = item.question;
+                document.getElementById('card-answer').textContent = item.answer;
+                document.getElementById('card-detail').textContent = item.detail;
+
+                const total = filteredData.length;
+                document.getElementById('flashcard-progress-text').textContent = `カード ${flashcardIndex + 1} / ${total}`;
+                document.getElementById('flashcard-status-count').textContent = `覚えた: ${masteredIds.size} / ${CIVICS_DATA.length}`;
+
+                const progressPct = ((flashcardIndex + 1) / total) * 100;
+                document.getElementById('flashcard-progress-bar').style.width = `${progressPct}%`;
+                
+                const masterPct = (masteredIds.size / CIVICS_DATA.length) * 100;
+                document.getElementById('flashcard-mastered-bar').style.width = `${masterPct}%`;
+            }, 150);
+        }
+
+        function nextFlashcard() {
+            if (flashcardIndex < filteredData.length - 1) {
+                flashcardIndex++;
+            } else {
+                flashcardIndex = 0;
+            }
+            updateFlashcard();
+        }
+
+        function prevFlashcard() {
+            if (flashcardIndex > 0) {
+                flashcardIndex--;
+            } else {
+                flashcardIndex = filteredData.length - 1;
+            }
+            updateFlashcard();
+        }
+
+        function markFlashcard(isMastered) {
+            const currentItem = filteredData[flashcardIndex];
+            if (isMastered) {
+                masteredIds.add(currentItem.id);
+            } else {
+                masteredIds.delete(currentItem.id);
+            }
+            localStorage.setItem('civics_mastered', JSON.stringify([...masteredIds]));
+            nextFlashcard();
+        }
+
+        function resetFlashcardProgress() {
+            if (confirm('習熟度記録を初期化しますか？')) {
+                masteredIds.clear();
+                localStorage.removeItem('civics_mastered');
+                updateFlashcard();
+            }
+        }
+
+        function speakCurrentCard() {
+            if (!('speechSynthesis' in window)) return;
+            const item = filteredData[flashcardIndex];
+            const text = `${item.answer}。${item.detail}`;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ja-JP';
+            synth.speak(utterance);
+        }
+
+        function resetInputMode() {
+            inputIndex = 0;
+            inputScore = 0;
+            currentInputItem = CIVICS_DATA[Math.floor(Math.random() * CIVICS_DATA.length)];
+            displayInputQuestion();
+        }
+
+        function displayInputQuestion() {
+            document.getElementById('input-feedback').classList.add('hidden');
+            document.getElementById('input-next-btn').classList.add('hidden');
+            document.getElementById('input-submit-btn').disabled = false;
+            document.getElementById('user-text-input').disabled = false;
+            document.getElementById('user-text-input').value = '';
+            document.getElementById('user-text-input').focus();
+
+            document.getElementById('input-progress-text').textContent = `出題数: ${inputIndex + 1}`;
+            document.getElementById('input-score-text').textContent = `正解数: ${inputScore}`;
+            document.getElementById('input-category-display').textContent = currentInputItem.category;
+            document.getElementById('input-question-text').textContent = currentInputItem.question;
+        }
+
+        function submitInputAnswer(e) {
+            e.preventDefault();
+            const userInput = document.getElementById('user-text-input').value.trim().toLowerCase();
+            if (!userInput) return;
+
+            const targetAnswer = currentInputItem.answer.toLowerCase();
+            const targetReading = currentInputItem.reading || '';
+            const isCorrect = userInput === targetAnswer || 
+                              userInput === targetReading || 
+                              (userInput.length >= 2 && targetAnswer.includes(userInput));
+
+            const feedbackEl = document.getElementById('input-feedback');
+            const badgeEl = document.getElementById('input-feedback-badge');
+            const titleEl = document.getElementById('input-feedback-title');
+            const ansEl = document.getElementById('input-feedback-correct-answer');
+            const detailEl = document.getElementById('input-feedback-detail');
+
+            feedbackEl.classList.remove('hidden');
+            document.getElementById('input-submit-btn').disabled = true;
+            document.getElementById('user-text-input').disabled = true;
+
+            if (isCorrect) {
+                inputScore++;
+                feedbackEl.className = "p-4 rounded-xl border bg-emerald-50 border-emerald-300 dark:bg-emerald-950/50 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 space-y-1";
+                badgeEl.className = "px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-500 text-white";
+                badgeEl.textContent = "正解！";
+                titleEl.textContent = "素晴らしい！正解です。";
+            } else {
+                feedbackEl.className = "p-4 rounded-xl border bg-rose-50 border-rose-300 dark:bg-rose-950/50 dark:border-rose-800 text-rose-900 dark:text-rose-200 space-y-1";
+                badgeEl.className = "px-2.5 py-0.5 rounded-full text-xs font-black bg-rose-500 text-white";
+                badgeEl.textContent = "不正解";
+                titleEl.textContent = "惜しい！模範解答を確認しましょう。";
+            }
+
+            ansEl.textContent = `正解: ${currentInputItem.answer} (${currentInputItem.reading})`;
+            detailEl.textContent = currentInputItem.detail;
+
+            document.getElementById('input-score-text').textContent = `正解数: ${inputScore}`;
+            document.getElementById('input-next-btn').classList.remove('hidden');
+        }
+
+        function nextInputQuestion() {
+            inputIndex++;
+            currentInputItem = CIVICS_DATA[Math.floor(Math.random() * CIVICS_DATA.length)];
+            displayInputQuestion();
+        }
+
+        function resetQuiz8Mode() {
+            quiz8Index = 0;
+            quiz8Score = 0;
+            quiz8Items = [...CIVICS_DATA].sort(() => 0.5 - Math.random()).slice(0, 10);
+            displayQuiz8Question();
+        }
+
+        function toggleTimerSetting() {
+            timerEnabled = document.getElementById('timer-toggle').checked;
+            const container = document.getElementById('timer-display-container');
+            if (timerEnabled) {
+                container.classList.remove('opacity-30');
+            } else {
+                container.classList.add('opacity-30');
+                clearInterval(timerInterval);
+            }
+        }
+
+        function displayQuiz8Question() {
+            clearInterval(timerInterval);
+            document.getElementById('quiz8-explanation').classList.add('hidden');
+            document.getElementById('quiz8-next-btn').classList.add('hidden');
+
+            if (quiz8Index >= quiz8Items.length) {
+                document.getElementById('quiz8-question').textContent = `テスト終了！ スコア: ${quiz8Score} / ${quiz8Items.length} 問正解`;
+                document.getElementById('quiz8-options').innerHTML = `
+                    <button onclick="resetQuiz8Mode()" class="col-span-full py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg transition text-base">
+                        もう一度テストを受ける
+                    </button>
+                `;
+                return;
+            }
+
+            const current = quiz8Items[quiz8Index];
+            document.getElementById('quiz8-counter').textContent = `第 ${quiz8Index + 1} / ${quiz8Items.length} 問`;
+            document.getElementById('quiz8-question').textContent = current.question;
+
+            const otherItems = CIVICS_DATA.filter(item => item.id !== current.id);
+            const shuffledOthers = [...otherItems].sort(() => 0.5 - Math.random()).slice(0, 7);
+            const options = [current, ...shuffledOthers].sort(() => 0.5 - Math.random());
+
+            const optionsContainer = document.getElementById('quiz8-options');
+            optionsContainer.innerHTML = '';
+
+            options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz8-opt-btn w-full p-3 bg-slate-50 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 rounded-xl font-medium text-xs sm:text-sm text-slate-800 dark:text-slate-100 transition flex items-center space-x-2 text-left shadow-sm";
+                btn.innerHTML = `
+                    <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300 font-bold text-xs flex items-center justify-center shrink-0">${idx + 1}</span>
+                    <span class="line-clamp-2">${opt.answer}</span>
+                `;
+                btn.onclick = () => selectQuiz8Option(opt.id === current.id, current);
+                optionsContainer.appendChild(btn);
+            });
+
+            if (timerEnabled) {
+                timeLeft = 15;
+                document.getElementById('timer-text').textContent = `${timeLeft}s`;
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    document.getElementById('timer-text').textContent = `${timeLeft}s`;
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        selectQuiz8Option(false, current, true);
+                    }
+                }, 1000);
+            }
+        }
+
+        function selectQuiz8Option(isCorrect, currentItem, isTimeout = false) {
+            clearInterval(timerInterval);
+            const btns = document.querySelectorAll('.quiz8-opt-btn');
+            btns.forEach(btn => btn.disabled = true);
+
+            const expBox = document.getElementById('quiz8-explanation');
+            const statusEl = document.getElementById('quiz8-result-status');
+            const termEl = document.getElementById('quiz8-correct-term');
+            const textEl = document.getElementById('quiz8-explanation-text');
+
+            expBox.classList.remove('hidden');
+
+            if (isCorrect) {
+                quiz8Score++;
+                statusEl.textContent = "⭕ 正解！";
+                statusEl.className = "font-bold text-sm text-emerald-600 dark:text-emerald-400";
+            } else if (isTimeout) {
+                statusEl.textContent = "⏱ タイムアップ！";
+                statusEl.className = "font-bold text-sm text-amber-600 dark:text-amber-400";
+            } else {
+                statusEl.textContent = "❌ 不正解";
+                statusEl.className = "font-bold text-sm text-rose-600 dark:text-rose-400";
+            }
+
+            termEl.textContent = `正解: ${currentItem.answer}`;
+            textEl.textContent = currentItem.detail;
+            document.getElementById('quiz8-next-btn').classList.remove('hidden');
+        }
+
+        function nextQuiz8Question() {
+            quiz8Index++;
+            displayQuiz8Question();
+        }
+
+        function renderMasterList() {
+            filterMasterList();
+        }
+
+        function filterMasterList() {
+            const query = document.getElementById('list-search-input').value.toLowerCase().trim();
+            const cat = document.getElementById('list-category-select').value;
+
+            const filtered = CIVICS_DATA.filter(item => {
+                const matchesCat = (cat === 'all' || item.category === cat);
+                const matchesSearch = item.question.toLowerCase().includes(query) ||
+                                      item.answer.toLowerCase().includes(query) ||
+                                      item.detail.toLowerCase().includes(query) ||
+                                      (item.reading && item.reading.includes(query));
+                return matchesCat && matchesSearch;
+            });
+
+            document.getElementById('list-count-info').textContent = `全 ${CIVICS_DATA.length} 件中 ${filtered.length} 件表示`;
+
+            const container = document.getElementById('master-list-container');
+            container.innerHTML = '';
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-2 hover:border-blue-300 dark:hover:border-blue-700 transition";
+                card.innerHTML = `
+                    <div class="flex justify-between items-start gap-2">
+                        <span class="px-2 py-0.5 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-300 rounded text-xs font-bold shrink-0">
+                            ${item.category}
+                        </span>
+                        <button onclick="speakText('${item.answer}。${item.detail}')" class="text-slate-400 hover:text-blue-600 p-1 transition" title="読み上げ">
+                            <i class="fa-solid fa-volume-high text-xs"></i>
+                        </button>
+                    </div>
+                    <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 leading-snug">
+                        Q. ${item.question}
+                    </h4>
+                    <div class="pt-1 flex items-baseline space-x-2">
+                        <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">A.</span>
+                        <span class="font-extrabold text-base text-slate-900 dark:text-white">${item.answer}</span>
+                        ${item.reading ? `<span class="text-xs text-slate-400">(${item.reading})</span>` : ''}
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-700/60 pt-2">
+                        ${item.detail}
+                    </p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) return;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ja-JP';
+            synth.speak(utterance);
+        }
+
+        function initTheme() {
+            const btn = document.getElementById('themeToggleBtn');
+            const icon = document.getElementById('themeIcon');
+            
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+                icon.className = 'fa-solid fa-sun text-amber-400 text-lg';
+            }
+
+            btn.onclick = () => {
+                document.documentElement.classList.toggle('dark');
+                if (document.documentElement.classList.contains('dark')) {
+                    icon.className = 'fa-solid fa-sun text-amber-400 text-lg';
+                } else {
+                    icon.className = 'fa-solid fa-moon text-lg';
+                }
+            };
+        }
+    </script>
+</body>
+</html>
+```
+^^^eof
+
+上のマニュアルの手順に従って、エディタ内にあるコードを **`index.html`** という名前でGitHubのリポジトリにアップロードしていただければ、誰でもURL経由でアクセスしてすぐに暗記アプリを利用できるようになります！
